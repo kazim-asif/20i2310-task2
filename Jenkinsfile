@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.8'
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
@@ -14,20 +10,44 @@ pipeline {
             }
         }
 
-        stage('Environment preparation - Install Dependencies') {
+        stage('Set Up Environment') {
             steps {
-                echo "-=- preparing project environment -=-"
-                // Python dependencies
-                sh "pip install -r requirements.txt"
+                script {
+                    // Create a virtual environment
+                    if (isUnix()) {
+                        sh 'python3 -m venv venv'
+                        sh 'source venv/bin/activate'
+                        sh 'python3 -m pip install --upgrade pip'
+                    } else {
+                        bat 'python -m venv venv'
+                        bat '.\\venv\\Scripts\\activate'
+                        bat 'python -m pip install --upgrade pip'
+                    }
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install dependencies from requirements.txt
+                    if (isUnix()) {
+                        sh 'pip install -r requirements.txt'
+                    } else {
+                        bat 'pip install -r requirements.txt'
+                    }
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
                 script {
-                     echo "-=- execute tests -=-"
-                    withPythonEnv('Python3.8') {
-                        sh "pytest test.py"
+                    // Run the tests
+                    if (isUnix()) {
+                        sh 'pytest test.py'
+                    } else {
+                        bat 'pytest test.py'
                     }
                 }
             }
@@ -43,6 +63,17 @@ pipeline {
         failure {
             echo 'Job failed! Sending notifications...'
             // Add any failure notifications or cleanup tasks here
+        }
+
+        always {
+            script {
+                // Deactivate the virtual environment
+                if (isUnix()) {
+                    sh 'deactivate'
+                } else {
+                    bat 'deactivate'
+                }
+            }
         }
     }
 }
