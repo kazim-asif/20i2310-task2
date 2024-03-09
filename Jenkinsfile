@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.8'
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -10,21 +14,18 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Environment preparation - Install Dependencies') {
             steps {
-                script {
-                    // Use the 'withPythonEnv' step to manage Python environment
-                    withPythonEnv('Python3.8') {
-                        bat "pip install -r requirements.txt"
-                    }
-                }
+                echo "-=- preparing project environment -=-"
+                // Python dependencies
+                sh "pip install -r requirements.txt"
             }
         }
 
         stage('Run Tests') {
             steps {
                 script {
-                    // Use the 'withPythonEnv' step to manage Python environment
+                     echo "-=- execute tests -=-"
                     withPythonEnv('Python3.8') {
                         bat "pytest test.py"
                     }
