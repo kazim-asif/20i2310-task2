@@ -14,28 +14,24 @@ pipeline {
             steps {
                 script {
                     // Create a virtual environment
-                    if (isUnix()) {
-                        sh 'python3 -m venv venv'
-                        sh 'source venv/bin/activate'
-                        sh 'python3 -m pip install --upgrade pip'
-                    } else {
-                        bat 'python -m venv venv'
-                        bat '.\\venv\\Scripts\\activate'
-                        bat 'python -m pip install --upgrade pip'
-                    }
+                    bat 'python -m venv venv'
+                    bat '.\\venv\\Scripts\\activate'
+                    
+                    // Manually install pip in the virtual environment
+                    bat 'python -m ensurepip --default-pip'
+                    
+                    // Upgrade pip to the latest version
+                    bat '.\\venv\\Scripts\\python -m pip install --upgrade pip'
                 }
             }
         }
+
 
         stage('Install Dependencies') {
             steps {
                 script {
                     // Install dependencies from requirements.txt
-                    if (isUnix()) {
-                        sh 'pip install -r requirements.txt'
-                    } else {
-                        bat 'pip install -r requirements.txt'
-                    }
+                    bat 'pip install -r requirements.txt'
                 }
             }
         }
@@ -44,11 +40,7 @@ pipeline {
             steps {
                 script {
                     // Run the tests
-                    if (isUnix()) {
-                        sh 'pytest test.py'
-                    } else {
-                        bat 'pytest test.py'
-                    }
+                    bat 'pytest test.py'
                 }
             }
         }
@@ -68,11 +60,7 @@ pipeline {
         always {
             script {
                 // Deactivate the virtual environment
-                if (isUnix()) {
-                    sh 'deactivate'
-                } else {
-                    bat 'deactivate'
-                }
+                bat 'deactivate'
             }
         }
     }
