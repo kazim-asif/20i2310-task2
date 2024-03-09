@@ -1,10 +1,10 @@
 pipeline {
     agent any
     
-    environment {
-        PYTHON_VERSION = '3.8'
-        VIRTUAL_ENV = "${WORKSPACE}\\venv"
-    }
+    // environment {
+    //     PYTHON_VERSION = '3.8'
+    //     VIRTUAL_ENV = "${WORKSPACE}\\venv"
+    // }
 
     stages {
         stage('Checkout') {
@@ -18,8 +18,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    def pipCmd = "\"${VIRTUAL_ENV}\\Scripts\\pip\""
-                    bat "${pipCmd} install -r requirements.txt"
+                    bat "pip install -r requirements.txt"
                 }
             }
         }
@@ -27,8 +26,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    def pytestCmd = "\"${VIRTUAL_ENV}\\Scripts\\pytest\""
-                    bat "${pytestCmd} test.py"
+                    bat "pytest test.py"
                 }
             }
         }
@@ -36,12 +34,12 @@ pipeline {
 
     post {
         success {
-            echo 'Build successful! Running additional tasks...'
+            echo 'Job successful! Running additional tasks...'
             // Add any post-build tasks or notifications here
         }
 
         failure {
-            echo 'Build failed! Sending notifications...'
+            echo 'Job failed! Sending notifications...'
             // Add any failure notifications or cleanup tasks here
         }
     }
