@@ -27,7 +27,7 @@ pipeline {
                 script {
                      echo "-=- execute tests -=-"
                     withPythonEnv('Python3.8') {
-                        bat "pytest test.py"
+                        sh "pytest test.py"
                     }
                 }
             }
