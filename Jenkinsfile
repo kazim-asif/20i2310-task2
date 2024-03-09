@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Define the Python tool with the desired version
-        jdk 'Python3.8'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -18,8 +13,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Use the 'python' tool to install dependencies
-                    bat "\"${tool 'Python3.8'}\" -m pip install -r requirements.txt"
+                    // Use the 'withPythonEnv' step to manage Python environment
+                    withPythonEnv('Python3.8') {
+                        bat "pip install -r requirements.txt"
+                    }
                 }
             }
         }
@@ -27,8 +24,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Use the 'python' tool to run pytest
-                    bat "\"${tool 'Python3.8'}\" -m pytest test.py"
+                    // Use the 'withPythonEnv' step to manage Python environment
+                    withPythonEnv('Python3.8') {
+                        bat "pytest test.py"
+                    }
                 }
             }
         }
