@@ -1,10 +1,10 @@
 pipeline {
     agent any
-    
-    // environment {
-    //     PYTHON_VERSION = '3.8'
-    //     VIRTUAL_ENV = "${WORKSPACE}\\venv"
-    // }
+
+    tools {
+        // Define the Python tool with the desired version
+        python 'Python3.8'
+    }
 
     stages {
         stage('Checkout') {
@@ -18,7 +18,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    bat "pip install -r requirements.txt"
+                    // Use the 'python' tool to install dependencies
+                    bat "\"${tool 'Python3.8'}\" -m pip install -r requirements.txt"
                 }
             }
         }
@@ -26,7 +27,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    bat "pytest test.py"
+                    // Use the 'python' tool to run pytest
+                    bat "\"${tool 'Python3.8'}\" -m pytest test.py"
                 }
             }
         }
