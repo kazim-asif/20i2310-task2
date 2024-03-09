@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Define the Python tool with the desired version
-        python 'Python3.8'
+        jdk 'Python3.8'
     }
 
     stages {
