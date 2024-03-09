@@ -59,8 +59,8 @@ pipeline {
 
         always {
             script {
-                // Deactivate the virtual environment
-                bat 'deactivate'
+                // Deactivate the virtual environment on Windows
+                bat '.\\venv\\Scripts\\deactivate'
             }
         }
     }
